@@ -1,13 +1,11 @@
 const main = document.querySelector(".main");
 const addUserBtn = document.getElementById("add-user");
 const doubleBtn = document.getElementById("double");
-const shoMillionairesBtn = document.getElementById("show-millionaires");
+const showMillionairesBtn = document.getElementById("show-millionaires");
 const sortBtn = document.getElementById("sort");
 const calculateWealthBtn = document.getElementById("calculate-wealth");
 
 let data = [];
-
-
 
 // fetch user and money
 
@@ -24,7 +22,21 @@ async function getRandomUser() {
   };
   await addData(newUser);
 }
-// Map array by double the money
+// Reduce method --> calcolate the total amount
+function calculateWealth() {
+  const wealth = data.reduce((acc, user) => (acc += user.money), 0);
+  const wealthEl = document.createElement("section");
+  wealthEl.classList.add("wealth");
+  wealthEl.innerHTML = `Total Wealth<strong>${formatMoney(wealth)}</strong>`;
+  main.appendChild(wealthEl);
+}
+// Filter method -->Show-only millionaires
+function showOnlyMillionaires() {
+  data = data.filter((user) => user.money >= 1000000);
+  displayUser();
+}
+
+// Map method --> by double the money
 function doubleMoney() {
   data = data.map((user) => {
     return { ...user, money: user.money * 2 };
@@ -32,7 +44,7 @@ function doubleMoney() {
   displayUser();
 }
 
-// Sort users by reachest
+// Sort method --> users by reachest
 function sortByReachest() {
   data.sort((a, b) => b.money - a.money);
 
@@ -52,7 +64,7 @@ function displayUser(provideData = data) {
   provideData.forEach((person) => {
     const elem = document.createElement("div");
     elem.classList.add("person");
-    elem.innerHTML = `<strong>${person.name}</strong> ${formtatMoney(
+    elem.innerHTML = `<strong>${person.name}</strong> ${formatMoney(
       person.money
     )}`;
     main.appendChild(elem);
@@ -60,7 +72,7 @@ function displayUser(provideData = data) {
 }
 
 // format money
-function formtatMoney(number) {
+function formatMoney(number) {
   return "€" + number.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, "$&,");
 }
 
@@ -68,3 +80,5 @@ function formtatMoney(number) {
 addUserBtn.addEventListener("click", getRandomUser);
 doubleBtn.addEventListener("click", doubleMoney);
 sortBtn.addEventListener("click", sortByReachest);
+showMillionairesBtn.addEventListener("click", showOnlyMillionaires);
+calculateWealthBtn.addEventListener("click", calculateWealth);
